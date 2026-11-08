@@ -7,7 +7,7 @@ import axios from 'axios'
  * Default URL points to standard Spring Boot port 8080 (or environment variable).
  */
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8085/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

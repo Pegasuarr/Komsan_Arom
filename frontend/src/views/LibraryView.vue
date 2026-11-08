@@ -69,40 +69,85 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { usePlayerStore } from '@/stores/playerStore'
+
+const playerStore = usePlayerStore()
 
 const tabs = ['All', 'Playlists', 'Artists', 'Albums']
 const activeTab = ref('All')
-const likedCount = ref(24)
+const likedCount = ref(0)
 
-const libraryPlaylists = ref([
+function getTrackCount(category) {
+  const cat = category.toLowerCase()
+  return playerStore.catalog.filter(s => {
+    if (!s) return false
+    const genre = (s.genre || '').toLowerCase()
+    const title = (s.title || '').toLowerCase()
+    const artist = (s.artist || '').toLowerCase()
+    if (cat === 'korea') {
+      return genre === 'korea' || genre.includes('k-pop') || genre.includes('kpop') ||
+             title.includes('korea') || artist.includes('korea')
+    }
+    return genre === cat || genre.includes(cat) || title.includes(cat) || artist.includes(cat)
+  }).length
+}
+
+const libraryPlaylists = computed(() => [
   {
     id: 1,
-    title: 'Late Night Lo-Fi',
+    title: 'Khmer',
     creator: 'You',
-    trackCount: 18,
-    cover: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=400&auto=format&fit=crop&q=80'
-  },
-  {
-    id: 2,
-    title: 'Deep Focus',
-    creator: 'You',
-    trackCount: 32,
-    cover: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&auto=format&fit=crop&q=80'
-  },
-  {
-    id: 3,
-    title: 'Contemporary Khmer',
-    creator: 'MelodyHub',
-    trackCount: 25,
+    trackCount: getTrackCount('Khmer'),
     cover: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&auto=format&fit=crop&q=80'
   },
   {
-    id: 4,
-    title: 'Acoustic Sessions',
+    id: 2,
+    title: 'Chinese',
     creator: 'You',
-    trackCount: 14,
-    cover: 'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=400&auto=format&fit=crop&q=80'
+    trackCount: getTrackCount('Chinese'),
+    cover: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=400&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 3,
+    title: 'France',
+    creator: 'You',
+    trackCount: getTrackCount('France'),
+    cover: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 4,
+    title: 'English',
+    creator: 'You',
+    trackCount: getTrackCount('English'),
+    cover: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 5,
+    title: 'Phonk',
+    creator: 'You',
+    trackCount: getTrackCount('Phonk'),
+    cover: 'https://images.unsplash.com/photo-1508974239320-0a029497e820?w=400&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 6,
+    title: 'Japan',
+    creator: 'You',
+    trackCount: getTrackCount('Japan'),
+    cover: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 7,
+    title: 'Korea',
+    creator: 'You',
+    trackCount: getTrackCount('Korea'),
+    cover: 'https://images.unsplash.com/photo-1538485399081-7191377e8241?w=400&auto=format&fit=crop&q=80'
   }
 ])
+
+onMounted(() => {
+  if (playerStore.catalog.length === 0) {
+    playerStore.loadCatalogFromBackend()
+  }
+})
 </script>

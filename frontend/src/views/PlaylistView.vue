@@ -83,75 +83,151 @@
           </div>
         </div>
 
-        <!-- Album -->
-        <div class="hidden sm:block sm:col-span-4 text-xs text-melody-muted truncate pr-2">
-          {{ track.album || 'Single' }}
+        <!-- Album / Category -->
+        <div class="hidden sm:block sm:col-span-3 text-xs text-melody-muted truncate pr-2">
+          {{ track.genre || playlist.title }}
         </div>
 
-        <!-- Duration -->
-        <div class="col-span-4 sm:col-span-1 text-right text-xs text-melody-muted">
-          {{ track.duration }}
+        <!-- Duration & Edit button -->
+        <div class="col-span-4 sm:col-span-2 flex items-center justify-end gap-3 text-xs text-melody-muted font-mono">
+          <span>{{ track.duration }}</span>
+          <button
+            @click.stop="openEditModal(track)"
+            class="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-melody-muted hover:text-white hover:bg-melody-card transition cursor-pointer"
+            title="Edit song title & details"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+            </svg>
+          </button>
         </div>
       </div>
+
+      <!-- Empty state when playlist has no songs -->
+      <div v-if="playlist.tracks.length === 0" class="py-16 text-center text-melody-muted space-y-2">
+        <div class="w-12 h-12 rounded-full bg-melody-card border border-melody-border/60 mx-auto flex items-center justify-center text-melody-muted">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+          </svg>
+        </div>
+        <p class="text-sm font-semibold text-white">No tracks in {{ playlist.title }} yet</p>
+        <p class="text-xs">Use the Add / Upload Track button to start adding songs to this category!</p>
+      </div>
     </div>
+
+    <!-- Edit Song Modal Component -->
+    <EditSongModal
+      :is-open="isEditModalOpen"
+      :song="selectedSongForEdit"
+      @close="isEditModalOpen = false"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { usePlayerStore } from '@/stores/playerStore'
+import EditSongModal from '@/components/music/EditSongModal.vue'
 
+const route = useRoute()
 const playerStore = usePlayerStore()
 
-const playlist = ref({
-  id: 1,
-  title: 'Late Night Lo-Fi',
-  description: 'Smooth atmospheric beats, vinyl crackles, and warm electric piano for deep concentration.',
-  creator: 'MelodyHub Editorial',
-  cover: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=500&auto=format&fit=crop&q=80',
-  tracks: [
-    {
-      id: 1,
-      title: 'Midnight Reverie',
-      artist: 'Aroma Beats',
-      album: 'Midnight Echoes',
-      duration: '3:15',
-      cover: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=300&auto=format&fit=crop&q=80',
-      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
-    },
-    {
-      id: 2,
-      title: 'Phnom Penh After Dark',
-      artist: 'VannDa',
-      album: 'Skull 2',
-      duration: '3:24',
-      cover: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300&auto=format&fit=crop&q=80',
-      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
-    },
-    {
-      id: 3,
-      title: 'Mekong River Sunset',
-      artist: 'Sinn Sisamouth (Lo-Fi Rework)',
-      album: 'Golden Era Revisited',
-      duration: '4:12',
-      cover: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&auto=format&fit=crop&q=80',
-      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'
-    },
-    {
-      id: 4,
-      title: 'Electric Dreams',
-      artist: 'Kroma Sound',
-      album: 'Synthesized Soul',
-      duration: '2:56',
-      cover: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&auto=format&fit=crop&q=80',
-      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3'
+const isEditModalOpen = ref(false)
+const selectedSongForEdit = ref(null)
+
+function openEditModal(track) {
+  selectedSongForEdit.value = track
+  isEditModalOpen.value = true
+}
+
+const playlistsData = {
+  1: {
+    id: 1,
+    title: 'Khmer',
+    description: 'Traditional & contemporary Cambodian music, golden era classics, and modern rhythms.',
+    creator: 'MelodyHub',
+    cover: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500&auto=format&fit=crop&q=80'
+  },
+  2: {
+    id: 2,
+    title: 'Chinese',
+    description: 'Mandopop, classical Chinese instruments, and soothing acoustic melodies.',
+    creator: 'MelodyHub',
+    cover: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=500&auto=format&fit=crop&q=80'
+  },
+  3: {
+    id: 3,
+    title: 'France',
+    description: 'French chanson, modern Parisian indie pop, and cafe vibes.',
+    creator: 'MelodyHub',
+    cover: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=500&auto=format&fit=crop&q=80'
+  },
+  4: {
+    id: 4,
+    title: 'English',
+    description: 'Global pop hits, indie rock, R&B grooves, and acoustic favorites.',
+    creator: 'MelodyHub',
+    cover: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=500&auto=format&fit=crop&q=80'
+  },
+  5: {
+    id: 5,
+    title: 'Phonk',
+    description: 'Drift phonk, aggressive 808 sub-bass, cowbell rhythms, and night drives.',
+    creator: 'MelodyHub',
+    cover: 'https://images.unsplash.com/photo-1508974239320-0a029497e820?w=500&auto=format&fit=crop&q=80'
+  },
+  6: {
+    id: 6,
+    title: 'Japan',
+    description: 'City Pop, anime OSTs, J-Pop sensations, and Tokyo ambient soundscapes.',
+    creator: 'MelodyHub',
+    cover: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=500&auto=format&fit=crop&q=80'
+  },
+  7: {
+    id: 7,
+    title: 'Korea',
+    description: 'K-Pop anthems, soulful Korean ballads, and vibrant Seoul nights.',
+    creator: 'MelodyHub',
+    cover: 'https://images.unsplash.com/photo-1538485399081-7191377e8241?w=500&auto=format&fit=crop&q=80'
+  }
+}
+
+const playlist = computed(() => {
+  const paramId = parseInt(route.params.id) || 1
+  const base = playlistsData[paramId] || playlistsData[1]
+  const catName = base.title.toLowerCase()
+
+  // Match tracks belonging to this playlist
+  const matchingTracks = playerStore.catalog.filter(s => {
+    if (!s) return false
+    const genre = (s.genre || '').toLowerCase()
+    const title = (s.title || '').toLowerCase()
+    const artist = (s.artist || '').toLowerCase()
+
+    if (catName === 'korea') {
+      return genre === 'korea' || genre.includes('k-pop') || genre.includes('kpop') ||
+             title.includes('korea') || artist.includes('korea')
     }
-  ]
+    return genre === catName || genre.includes(catName) ||
+           title.includes(catName) || artist.includes(catName)
+  })
+
+  return {
+    ...base,
+    tracks: matchingTracks
+  }
 })
 
 function playAll() {
   if (playlist.value.tracks.length > 0) {
-    playerStore.playSong(playlist.value.tracks[0])
+    playerStore.playSong(playlist.value.tracks[0], playlist.value.tracks)
   }
 }
+
+onMounted(() => {
+  if (playerStore.catalog.length === 0) {
+    playerStore.loadCatalogFromBackend()
+  }
+})
 </script>

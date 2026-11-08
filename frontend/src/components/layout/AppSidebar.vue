@@ -119,6 +119,30 @@
         </router-link>
       </div>
 
+      <!-- Telegram Music Bot Promo Card -->
+      <div class="p-3.5 mx-4 my-2 rounded-2xl bg-gradient-to-br from-[#2AABEE]/15 to-[#229ED9]/5 border border-[#2AABEE]/30 shadow-md">
+        <div class="flex items-start gap-3">
+          <div class="w-9 h-9 rounded-xl bg-[#2AABEE] text-white flex items-center justify-center shrink-0 shadow-md shadow-[#2AABEE]/30">
+            <TelegramIcon custom-class="w-5 h-5 text-white" />
+          </div>
+          <div class="min-w-0 flex-1">
+            <h4 class="text-xs font-bold text-white tracking-tight">Telegram Music Bot</h4>
+            <p class="text-[11px] text-sky-200/70 leading-snug mt-0.5">Stream your catalog tracks directly in Telegram</p>
+          </div>
+        </div>
+        <a
+          :href="TELEGRAM_BOT_URL"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mt-3 w-full py-1.5 px-3 rounded-xl bg-[#2AABEE] hover:bg-[#229ED9] text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-md shadow-[#2AABEE]/20 transition hover:scale-[1.02] active:scale-95 cursor-pointer"
+        >
+          <span>Launch Bot</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
+      </div>
+
       <!-- Bottom Admin Link -->
       <div class="p-4 border-t border-melody-border/40">
         <router-link
@@ -138,6 +162,8 @@
 
 <script setup>
 import { ref } from 'vue'
+import { TELEGRAM_BOT_URL } from '@/config/telegram'
+import TelegramIcon from '@/components/common/TelegramIcon.vue'
 
 // Props: accepts 'isOpen' from the parent App.vue for mobile drawer control
 defineProps({
@@ -169,13 +195,15 @@ const navItems = [
   }
 ]
 
-// Mock User Playlists (Will be wired to Pinia / Spring Boot later)
+// User Curated Playlists
 const userPlaylists = ref([
-  { id: 1, title: 'Late Night Lo-Fi' },
-  { id: 2, title: 'Deep Focus' },
-  { id: 3, title: 'Contemporary Khmer' },
-  { id: 4, title: 'Acoustic Sessions' },
-  { id: 5, title: 'Electronic Beats' }
+  { id: 1, title: 'Khmer' },
+  { id: 2, title: 'Chinese' },
+  { id: 3, title: 'France' },
+  { id: 4, title: 'English' },
+  { id: 5, title: 'Phonk' },
+  { id: 6, title: 'Japan' },
+  { id: 7, title: 'Korea' }
 ])
 
 function createNewPlaylist() {

@@ -54,6 +54,18 @@
 
     <!-- Right: Authentication & Profile -->
     <div class="flex items-center gap-3">
+      <!-- Telegram Music Bot Launch Button -->
+      <a
+        :href="TELEGRAM_BOT_URL"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#2AABEE]/10 hover:bg-[#2AABEE]/25 border border-[#2AABEE]/40 text-white text-xs font-semibold transition hover:scale-105 active:scale-95 shadow-sm shadow-[#2AABEE]/10 group cursor-pointer"
+        title="Listen to music with MelodyHub Telegram Bot"
+      >
+        <TelegramIcon custom-class="w-4 h-4 text-[#2AABEE] group-hover:scale-110 transition-transform shrink-0" />
+        <span class="hidden sm:inline text-xs text-sky-200 group-hover:text-white font-medium">Telegram Bot</span>
+      </a>
+
       <!-- If NOT authenticated -->
       <template v-if="!authStore.isAuthenticated">
         <router-link
@@ -104,6 +116,8 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
+import { TELEGRAM_BOT_URL } from '@/config/telegram'
+import TelegramIcon from '@/components/common/TelegramIcon.vue'
 
 defineEmits(['toggleSidebar'])
 
