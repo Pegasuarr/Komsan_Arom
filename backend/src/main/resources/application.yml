@@ -1,0 +1,47 @@
+server:
+  port: 8085
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: melodyhub-backend
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/melodyhub_db}
+    username: ${SPRING_DATASOURCE_USERNAME:melodyhub_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:melodyhub_password}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 20000
+
+  jpa:
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          lob:
+            non_contextual_creation: true
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+storage:
+  base-dir: storage
+  songs-dir: storage/songs
+  covers-dir: storage/covers
+
+telegram:
+  bot:
+    token: ${TELEGRAM_BOT_TOKEN:9174186548:AAEuUkUNh9sgyIVcqf2xjxUuA0jnjYd4H_E}
+    username: ${TELEGRAM_BOT_USERNAME:komsan_arom_music_bot}
+    enabled: ${TELEGRAM_BOT_ENABLED:true}
